@@ -4,6 +4,8 @@
 #include <stdint.h>
 #include <string>
 
+typedef uint8_t bigint_type;
+
 class BigInt
 {
 public:
@@ -12,67 +14,79 @@ public:
 	~BigInt();
 
 	explicit BigInt(int i);
-	// explicit BigInt(const char* value);
-	// explicit BigInt(const char* value, int radix);
+	explicit BigInt(const char* value);
+	explicit BigInt(const char* value, int radix);
 
-	//BigInt& operator=(const BigInt&);
+	BigInt& operator=(const BigInt&);
 
-	//BigInt operator+() const;
-	//BigInt operator-() const;
+	BigInt operator+() const;
+	BigInt operator-() const;
 
 	BigInt operator+(const BigInt&) const;
 	BigInt operator-(const BigInt&) const;
-	// BigInt operator*(const BigInt&) const;
-	// BigInt operator/(const BigInt&) const;
-	// BigInt operator%(const BigInt&) const;
+	BigInt operator*(const BigInt&) const;
+	BigInt operator/(const BigInt&) const;
+	BigInt operator%(const BigInt&) const;
 
-	// BigInt& operator++();
-	// BigInt& operator--();
-	// BigInt operator++(int);
-	// BigInt operator--(int);
+	BigInt& operator++();
+	BigInt& operator--();
+	BigInt operator++(int);
+	BigInt operator--(int);
 
-	// bool operator==(const BigInt&) const;
-	// bool operator!=(const BigInt&) const;
-	// bool operator>=(const BigInt&) const;
-	// bool operator<=(const BigInt&) const;
-	// bool operator>(const BigInt&) const;
-	// bool operator<(const BigInt&) const;
+	bool operator==(const BigInt&) const;
+	bool operator!=(const BigInt&) const;
+	bool operator>=(const BigInt&) const;
+	bool operator<=(const BigInt&) const;
+	bool operator>(const BigInt&) const;
+	bool operator<(const BigInt&) const;
 
 	// bool operator!();
 	// bool operator&&(const BigInt&); TODO more types?
 	// bool operator||(const BigInt&);
 
-	// BigInt operator~() const;
-	// BigInt operator&(const BigInt&) const;
-	// BigInt operator|(const BigInt&) const;
-	// BigInt operator^(const BigInt&) const;
-	// BigInt operator<<(int) const;
-	// BigInt operator>>(int) const;
+	BigInt operator~() const;
+	BigInt operator&(const BigInt&) const;
+	BigInt operator|(const BigInt&) const;
+	BigInt operator^(const BigInt&) const;
+	BigInt operator<<(int) const;
+	BigInt operator>>(int) const;
 
-	// BigInt& operator+=(const BigInt&) const;
-	// BigInt& operator-=(const BigInt&) const;
-	// BigInt& operator*=(const BigInt&) const;
-	// BigInt& operator/=(const BigInt&) const;
-	// BigInt& operator%=(const BigInt&) const;
+	BigInt& operator+=(const BigInt&);
+	BigInt& operator-=(const BigInt&);
+	BigInt& operator*=(const BigInt&);
+	BigInt& operator/=(const BigInt&);
+	BigInt& operator%=(const BigInt&);
 
-	// BigInt& operator&=(const BigInt&) const;
-	// BigInt& operator|=(const BigInt&) const;
-	// BigInt& operator^=(const BigInt&) const;
-	// BigInt& operator<<=(int) const;
-	// BigInt& operator>>=(int) const;
+	BigInt& operator&=(const BigInt&);
+	BigInt& operator|=(const BigInt&);
+	BigInt& operator^=(const BigInt&);
+	BigInt& operator<<=(int);
+	BigInt& operator>>=(int);
 
-	// uint32_t operator[](int);
+	bigint_type operator[](int) const;
 
-	std::string dbgstr() const; // DEBUG
+	bool isZero() const;
+	bool isPositive() const;
+	bool isNegative() const;
+
+	void divmod(const BigInt&, BigInt* quotient, BigInt* remainder) const;
+
+	std::string toString() const;
+	std::string toString(int radix) const;
+
+	static const BigInt negative_one;
+	static const BigInt zero;
+	static const BigInt one;
+	static const BigInt ten;
 
 private:
 	int sign;
 	int length;
-	uint32_t* value;
+	bigint_type* value;
 
-	BigInt(int sign, int length, uint32_t* value);
+	BigInt(int sign, int length, bigint_type* value);
 };
 
-BigInt operator "" _bi(const char*); // XXX Only accepts int-sized values
+BigInt operator "" _bi(const char*);
 
 #endif /* __BIGINT_H__ */
