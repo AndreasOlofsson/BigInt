@@ -44,23 +44,21 @@ BigInt::BigInt(int i)
 
 BigInt::BigInt(const char* str)
 {
+	int negative = 0;
+
 	if (str[0] == '-')
 	{
-		sign = 1;
+		negative = 1;
 		str++;
 	}
 	else if (str[0] == '+')
 	{
-		sign = 0;
 		str++;
-	}
-	else
-	{
-		sign = 0;
 	}
 
 	length = 0;
 	value = 0;
+	sign = 0;
 
 	int radix;
 
@@ -129,30 +127,27 @@ BigInt::BigInt(const char* str)
 		}
 	}
 
-	if (sign)
+	if (negative)
 	{
-		sign = !sign;
 		*this = -*this;
 	}
 }
 
 BigInt::BigInt(const char* str, int radix)
 {
+	int negative = 0;
+
 	if (str[0] == '-')
 	{
-		sign = 1;
+		negative = 1;
 		str++;
 	}
 	else if (str[0] == '+')
 	{
-		sign = 0;
 		str++;
 	}
-	else
-	{
-		sign = 0;
-	}
 
+	sign = 0;
 	length = 0;
 	value = 0;
 
@@ -176,7 +171,68 @@ BigInt::BigInt(const char* str, int radix)
 			*this += BigInt(*str - 'A' + 10);
 		}
 	}
+
+	if (negative)
+	{
+		*this = -*this;
+	}
 }
+
+BigInt::operator bool()
+{
+	return !isZero();
+}
+
+#define __bigint_conversion(_result_type) \
+	BigInt::operator _result_type()                                                   \
+	{                                                                                 \
+		unsigned _result_type result = 0;                                             \
+		int i;                                                                        \
+		for (i = 0; i < sizeof(_result_type) && i < length; i += sizeof(bigint_type)) \
+		{                                                                             \
+			result |= value[i] << (i * 8);                                            \
+		}                                                                             \
+		for (; i < sizeof(_result_type); i++)                                         \
+		{                                                                             \
+			result |= (sign ? 0xFF : 0) << (i * 8);                                   \
+		}                                                                             \
+		if (sign)                                                                     \
+		{                                                                             \
+			result |= (_result_type) 1 << (sizeof(_result_type) * 8 - 1);             \
+		}                                                                             \
+		else                                                                          \
+		{                                                                             \
+			result &= ~((_result_type) 1 << (sizeof(_result_type) * 8 - 1));          \
+		}                                                                             \
+		return (_result_type) result;                                                 \
+	}
+
+#define __bigint_conversion_unsigned(_result_type) \
+	BigInt::operator unsigned _result_type()                                          \
+	{                                                                                 \
+		unsigned _result_type result = 0;                                             \
+		int i;                                                                        \
+		for (i = 0; i < sizeof(_result_type) && i < length; i += sizeof(bigint_type)) \
+		{                                                                             \
+			result |= value[i] << (i * 8);                                            \
+		}                                                                             \
+		for (; i < sizeof(_result_type); i++)                                         \
+		{                                                                             \
+			result |= (sign ? 0xFF : 0) << (i * 8);                                   \
+		}                                                                             \
+		return (_result_type) result;                                                 \
+	}
+
+__bigint_conversion(char)
+__bigint_conversion(short)
+__bigint_conversion(int)
+__bigint_conversion(long)
+__bigint_conversion(long long)
+__bigint_conversion_unsigned(char)
+__bigint_conversion_unsigned(short)
+__bigint_conversion_unsigned(int)
+__bigint_conversion_unsigned(long)
+__bigint_conversion_unsigned(long long)
 
 BigInt& BigInt::operator=(const BigInt& bigint)
 {
@@ -911,6 +967,12 @@ const BigInt BigInt::ten(10);
 
 BigInt::BigInt(int sign, int length, bigint_type* value)
 	:sign(sign), length(length), value(value) {}
+
+std::ostream& operator<<(std::ostream& stream, const BigInt& bigint)
+{
+	stream << bigint.toString();
+	return stream;
+}
 
 BigInt operator "" _bi(const char* str)
 {

@@ -3,8 +3,9 @@
 
 #include <stdint.h>
 #include <string>
+#include <ostream>
 
-typedef uint8_t bigint_type;
+typedef uint32_t bigint_type;
 
 class BigInt
 {
@@ -16,6 +17,18 @@ public:
 	explicit BigInt(int i);
 	explicit BigInt(const char* value);
 	explicit BigInt(const char* value, int radix);
+
+	operator bool();
+	explicit operator char();
+	explicit operator short();
+	explicit operator int();
+	explicit operator long();
+	explicit operator long long();
+	explicit operator unsigned char();
+	explicit operator unsigned short();
+	explicit operator unsigned int();
+	explicit operator unsigned long();
+	explicit operator unsigned long long();
 
 	BigInt& operator=(const BigInt&);
 
@@ -40,7 +53,7 @@ public:
 	bool operator>(const BigInt&) const;
 	bool operator<(const BigInt&) const;
 
-	// bool operator!();
+	bool operator!();
 	// bool operator&&(const BigInt&); TODO more types?
 	// bool operator||(const BigInt&);
 
@@ -86,6 +99,8 @@ private:
 
 	BigInt(int sign, int length, bigint_type* value);
 };
+
+std::ostream& operator<<(std::ostream& stream, const BigInt& bigint);
 
 BigInt operator "" _bi(const char*);
 
