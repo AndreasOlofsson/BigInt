@@ -18,17 +18,17 @@ public:
     explicit BigInt(const char* value);
     explicit BigInt(const char* value, int radix);
 
-    operator bool();
-    explicit operator char();
-    explicit operator short();
-    explicit operator int();
-    explicit operator long();
-    explicit operator long long();
-    explicit operator unsigned char();
-    explicit operator unsigned short();
-    explicit operator unsigned int();
-    explicit operator unsigned long();
-    explicit operator unsigned long long();
+    operator bool() const;
+    explicit operator char() const;
+    explicit operator short() const;
+    explicit operator int() const;
+    explicit operator long() const;
+    explicit operator long long() const;
+    explicit operator unsigned char() const;
+    explicit operator unsigned short() const;
+    explicit operator unsigned int() const;
+    explicit operator unsigned long() const;
+    explicit operator unsigned long long() const;
 
     BigInt& operator=(const BigInt&);
 
@@ -53,9 +53,9 @@ public:
     bool operator>(const BigInt&) const;
     bool operator<(const BigInt&) const;
 
-    bool operator!();
-    // bool operator&&(const BigInt&); TODO more types?
-    // bool operator||(const BigInt&);
+    bool operator!() const;
+    bool operator&&(const BigInt&) const;
+    bool operator||(const BigInt&) const;
 
     BigInt operator~() const;
     BigInt operator&(const BigInt&) const;

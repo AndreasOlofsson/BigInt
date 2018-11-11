@@ -33,6 +33,7 @@ BigInt::BigInt(int i)
     if (i == 0 || i == -1)
     {
         length = 0;
+        value = 0;
     }
     else
     {
@@ -178,13 +179,13 @@ BigInt::BigInt(const char* str, int radix)
     }
 }
 
-BigInt::operator bool()
+BigInt::operator bool() const
 {
     return !isZero();
 }
 
 #define __bigint_conversion(_result_type) \
-    BigInt::operator _result_type()                                                   \
+    BigInt::operator _result_type() const                                             \
     {                                                                                 \
         unsigned _result_type result = 0;                                             \
         int i;                                                                        \
@@ -208,7 +209,7 @@ BigInt::operator bool()
     }
 
 #define __bigint_conversion_unsigned(_result_type) \
-    BigInt::operator unsigned _result_type()                                          \
+    BigInt::operator unsigned _result_type() const                                    \
     {                                                                                 \
         unsigned _result_type result = 0;                                             \
         int i;                                                                        \
@@ -610,6 +611,21 @@ bool BigInt::operator<(const BigInt& b) const
     return false;
 }
 
+bool BigInt::operator!() const
+{
+    return !((bool) *this);
+}
+
+bool BigInt::operator&&(const BigInt& b) const
+{
+    return (bool) *this && (bool) b;
+}
+
+bool BigInt::operator||(const BigInt& b) const
+{
+    return (bool) *this || (bool) b;
+}
+
 BigInt BigInt::operator~() const
 {
     bigint_type* new_value = new bigint_type[length];
@@ -909,7 +925,7 @@ void BigInt::divmod(const BigInt& b, BigInt* _quotient, BigInt* _remainder) cons
             if (remainder >= b)
             {
                 remainder -= b;
-                quotient |= BigInt::one << (i * sizeof(bigint_type) * 8 + j);
+                quotient |= BigInt::one << (int) (i * sizeof(bigint_type) * 8 + j);
             }
         }
     }
@@ -930,6 +946,11 @@ string BigInt::toString() const
 
 string BigInt::toString(int radix) const
 {
+    if (isZero())
+    {
+        return "0";
+    }
+
     if (isNegative())
     {
         return "-" + (-*this).toString(radix);
